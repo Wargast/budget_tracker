@@ -1,0 +1,15 @@
+# pyproject.toml
+
+[build-system]
+requires = ["setuptools>=64.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "budjet_tracker"
+version = "0.0.1"
+description = "CLI application to manage month expenses, import data and visualize them on a calc sheet"
+readme = "README.md"
+authors = [{ name = "Wargast", email = "NA" }]
+
+[project.scripts]
+btracker_cli = "app_cli.__main__:main"
