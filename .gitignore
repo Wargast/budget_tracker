@@ -1,5 +1,5 @@
 venv/
-data/
+datas/
 __pycache__/
 *.json
 *.pyc

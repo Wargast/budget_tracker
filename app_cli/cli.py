@@ -6,6 +6,7 @@ import argparse
 from pathlib import Path
 import sys
 import logging
+from front_tools import print_csv_file
 from bdd_model import *
 
 logger = logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
@@ -41,7 +42,6 @@ Available commands are:
             description='Display a expences store in a csv file')
         parser.add_argument(
             "csv_file",
-            # nargs="?",
             help="csv file that you whant to diplay"
         )
         args = parser.parse_args(sys.argv[2:])
@@ -56,7 +56,7 @@ Available commands are:
         
         # now that we're inside a subcommand, ignore the first
         # TWO argvs, ie the command (git) and the subcommand (commit)
-        print('Running Budget_tracker display_csv, file=%s' % args.csv_file)
+        print_csv_file(args.csv_file)
 
     def update(self):
         parser = argparse.ArgumentParser(
