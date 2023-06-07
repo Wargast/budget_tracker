@@ -3,10 +3,16 @@
 # play the view-controller role in the MVC-based architecture.
 
 import argparse
+import csv
 from pathlib import Path
 import sys
 import logging
-from front_tools import print_csv_file
+import pandas as pd
+
+from prettytable import PrettyTable, from_csv
+from tabulate import tabulate
+from controler import commentary_filter, read_csv_from_bank
+from front_tools import crop_header, detect_table_start, print_table
 from bdd_model import *
 
 logger = logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
@@ -55,8 +61,13 @@ Available commands are:
             raise SystemExit(1)
         
         # now that we're inside a subcommand, ignore the first
-        # TWO argvs, ie the command (git) and the subcommand (commit)
-        print_csv_file(args.csv_file)
+        # # TWO argvs, ie the command (git) and the subcommand (commit)
+        df_depences, df_revenus = read_csv_from_bank(args.csv_file)
+        print("\nREVENUE")
+        print(tabulate(df_revenus, headers='keys', tablefmt='psql'))
+        print("\nDEPENSES:")
+        print(tabulate(df_depences, headers='keys', tablefmt='psql'))
+        print_table([["alo", "test"],[12, 113],[12, 113],[12, 113]])
 
     def update(self):
         parser = argparse.ArgumentParser(
@@ -64,7 +75,7 @@ Available commands are:
         parser.add_argument(
             "csv_file",
             # nargs="?",
-            help="csv file that you whant to diplay"
+            help="csv file that you whant to use"
         )
         args = parser.parse_args(sys.argv[2:])
 

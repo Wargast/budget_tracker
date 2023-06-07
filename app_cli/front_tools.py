@@ -21,9 +21,20 @@ def crop_header(fp:TextIOWrapper )-> TextIOWrapper:
         
     return StringIO(fp.read())
 
-
-def print_csv_file(file):
+def detect_table_start(file):
+    """
+    skip line of the file until the line is blank then reconstruct IO wrapper 
+    with the reste of the line (should be the csv table)
+    """
+    table_start = 0
     with open(file) as fp:
-        fp = crop_header(fp)
-        mytable = from_csv(fp)
-        print(mytable)
+        for line_number, line in enumerate(fp):
+            if line in ['\n','\r\n']: 
+                table_start = line_number
+        print(f"table start at line {table_start+1}")
+    return table_start
+
+def print_table(table):
+    print(tabulate(table, headers="firstrow", tablefmt='rounded_grid'))
+
+    
