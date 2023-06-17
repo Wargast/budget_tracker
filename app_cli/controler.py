@@ -4,35 +4,8 @@ from typing import Tuple
 import pandas as pd
 import dateparser
 
-from front_tools import detect_table_start, select_category
-import bdd_model
-
-CATEGORY_LIST = [
-    "🔨 Salaire",
-    "💸 Alloc ",
-    "🎁 Cadeau ",
-    "🏦 Intérêts ",
-    "🏡 Loyer ",
-    "🥝 Courses ",
-    "🍔 Restau ",
-    "🚘 Transport ",
-    "🛍 Shopping ",
-    "📚 Loan ",
-    "🍺 Drink ",
-    "⚡️ Facture ",
-    "💫 Personal ",
-    "🧷 assurance ",
-    "📞 Communication ",
-    "💪 Sport ",
-    "🧘‍♂️ Wellness ",
-    "✈️ Vacances ",
-    "🏡 Maison ",
-    "👩‍⚕️ Santé ",
-    "🎗 Cadeau ",
-    "🍿 Loisirs ",
-    "💵 Economies ",
-    "autres",
-]
+import front_tools
+from app_cli.db_model import DataBase
 
 def commentary_filter(str):
     ban_regex = [ "CARTE", "NUMERO", "ACHAT",
@@ -49,17 +22,14 @@ def commentary_filter(str):
     
     return str.strip()
 
-def find_category(transaction, com: str):
-    print(transaction)
-    cat_guess = bdd_model.get_likely_cat()
-    return select_category(CATEGORY_LIST, cat_guess)
+
 
 def read_csv_from_bank(file: str) -> Tuple[pd.DataFrame, pd.DataFrame]:
     with open(file) as fp:
         dialect = csv.Sniffer().sniff(fp.read(1024))
         df = pd.read_csv(
                 file,
-                header=detect_table_start(file),
+                header=front_tools.detect_table_start(file),
                 dialect=dialect,
                 encoding_errors='ignore',
         )
@@ -78,10 +48,7 @@ def read_csv_from_bank(file: str) -> Tuple[pd.DataFrame, pd.DataFrame]:
                 columns=["date", "montant", "commentaire", "categorie"], 
         )
         df["montant"] = df["montant"].str.replace(",", ".") 
-
         df["commentaire"]= df["commentaire"].map(commentary_filter)
-        for ind, com in enumerate(df["commentaire"]) :
-            df.loc[ind, "categorie"] = find_category(df.iloc[ind], com)
         df_depences = df[df["montant"].astype("float") < 0]
         df_depences["montant"] = df_depences["montant"].astype("float").abs() 
         df_revenus  = df[df["montant"].astype("float") > 0]

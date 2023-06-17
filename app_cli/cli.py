@@ -11,14 +11,13 @@ import pandas as pd
 
 from prettytable import PrettyTable, from_csv
 from tabulate import tabulate
-from controler import commentary_filter, read_csv_from_bank
-from front_tools import crop_header, detect_table_start, print_table
-from bdd_model import *
+import controler
+from front_tools import crop_header, detect_table_start, plot_df, print_table
+from app_cli.db_model import DataBase
 
 logger = logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 
 class Budget_tracker():
-    
     def __init__(self):
         parser = argparse.ArgumentParser(
             description='Budjet tracker CLI',
@@ -40,8 +39,11 @@ Available commands are:
         if args.verbose :
             logger.setLevel(logging.DEBUG)
 
+        # init database
+        self.db = DataBase()
         # use dispatch pattern to invoke method with same name
         getattr(self, args.command)()
+
 
     def display_csv(self):
         parser = argparse.ArgumentParser(
@@ -61,12 +63,14 @@ Available commands are:
             raise SystemExit(1)
         
         # now that we're inside a subcommand, ignore the first
-        # # TWO argvs, ie the command (git) and the subcommand (commit)
-        df_depences, df_revenus = read_csv_from_bank(args.csv_file)
+        # TWO argvs, ie the command (git) and the subcommand (commit)
+        df_depences, df_revenus = controler.read_csv_from_bank(args.csv_file)
+        self.db.add_categories(df_depences)
+        self.db.add_categories(df_revenus)
         print("\nREVENUE")
-        print(tabulate(df_revenus, headers='keys', tablefmt='psql'))
+        plot_df(df_revenus)
         print("\nDEPENSES:")
-        print(tabulate(df_depences, headers='keys', tablefmt='psql'))
+        plot_df(df_depences)
 
     def update(self):
         parser = argparse.ArgumentParser(

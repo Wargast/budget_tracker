@@ -45,3 +45,7 @@ def select_category(category_list, default_cat):
         default=default_cat,
     ).execute()
     return cat
+
+def plot_df(df):
+    print(tabulate(df, headers='keys', tablefmt='psql'))
+
