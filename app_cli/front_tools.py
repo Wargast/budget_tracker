@@ -1,5 +1,6 @@
 import csv
 from io import StringIO, TextIOWrapper
+from InquirerPy import inquirer
 from prettytable import PrettyTable, from_csv
 from tabulate import tabulate
 
@@ -37,4 +38,10 @@ def detect_table_start(file):
 def print_table(table):
     print(tabulate(table, headers="firstrow", tablefmt='rounded_grid'))
 
-    
+def select_category(category_list, default_cat):
+    cat = inquirer.fuzzy(
+        message="Select actions:",
+        choices=category_list,
+        default=default_cat,
+    ).execute()
+    return cat
