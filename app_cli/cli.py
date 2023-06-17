@@ -67,7 +67,6 @@ Available commands are:
         print(tabulate(df_revenus, headers='keys', tablefmt='psql'))
         print("\nDEPENSES:")
         print(tabulate(df_depences, headers='keys', tablefmt='psql'))
-        print_table([["alo", "test"],[12, 113],[12, 113],[12, 113]])
 
     def update(self):
         parser = argparse.ArgumentParser(
