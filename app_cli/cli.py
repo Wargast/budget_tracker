@@ -13,7 +13,7 @@ from prettytable import PrettyTable, from_csv
 from tabulate import tabulate
 import controler
 from front_tools import crop_header, detect_table_start, plot_df, print_table
-from app_cli.db_model import DataBase
+from db_model import DataBase
 
 logger = logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 
@@ -71,6 +71,7 @@ Available commands are:
         plot_df(df_revenus)
         print("\nDEPENSES:")
         plot_df(df_depences)
+        self.db.save_data()
 
     def update(self):
         parser = argparse.ArgumentParser(

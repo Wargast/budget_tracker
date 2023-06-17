@@ -5,7 +5,7 @@ import pandas as pd
 import dateparser
 
 import front_tools
-from app_cli.db_model import DataBase
+from db_model import DataBase
 
 def commentary_filter(str):
     ban_regex = [ "CARTE", "NUMERO", "ACHAT",
@@ -49,9 +49,12 @@ def read_csv_from_bank(file: str) -> Tuple[pd.DataFrame, pd.DataFrame]:
         )
         df["montant"] = df["montant"].str.replace(",", ".") 
         df["commentaire"]= df["commentaire"].map(commentary_filter)
+        
         df_depences = df[df["montant"].astype("float") < 0]
         df_depences["montant"] = df_depences["montant"].astype("float").abs() 
         df_revenus  = df[df["montant"].astype("float") > 0]
+        df_depences = df_depences.reset_index(drop=True)
+        df_revenus = df_revenus.reset_index(drop=True)
         return df_depences, df_revenus
 
 
